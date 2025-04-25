@@ -47,10 +47,11 @@ public class BasicGameApp implements Runnable, KeyListener {
 	//These are things that are made up of more than one variable type
 	private Basket basket;
 	private Basket apple;
-	private Basket appleTrees;
-	Basket[]  basketArray = new Basket[10];
-	private Image appleTreesPic;
+
+	Basket[]  appleArray = new Basket[10];
+	private Image backgroundPic;
 	private Image applePic;
+	//private Image basketPic;
 
 
 	// Main method definition
@@ -73,13 +74,15 @@ public class BasicGameApp implements Runnable, KeyListener {
 		//create (construct) the objects needed for the game and load up
 		basketPic = Toolkit.getDefaultToolkit().getImage("basket.jpg");
 		applePic = Toolkit.getDefaultToolkit().getImage("apple.jpg");
-		appleTreesPic = Toolkit.getDefaultToolkit().getImage("apple trees.jpg");//load the picture
+		backgroundPic = Toolkit.getDefaultToolkit().getImage("trees.jpg");//load the picture
 		basket = new Basket(10,100);
-		appleTrees = new Basket(600,600);
 		apple = new Basket(600,600);
 
-		for(int x = 0; x<basketArray.length;x++){
-			basketArray[x] = new Basket((int)Math.random()*900,(int)(Math.random()*600));
+//apple.height = 100;
+		for(int x = 0; x<appleArray.length;x++){
+			appleArray[x] = new Basket((int)Math.random()*900,(int)(Math.random()*600));
+			apple.dx = (int)(Math.random()*500);
+			apple.dy = (int)(Math.random()*400);
 		}
 
 
@@ -111,8 +114,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 		basket.move();
 		basket.wrap();
 		collisions();
-		for(int y=0; y< basketArray.length; y++){
-			basketArray[y].move();
+		for(int y=0; y< appleArray.length; y++){
+			appleArray[y].bounce();
 		}
 
 
@@ -121,8 +124,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 
 
-		for(int b = 0; b< basketArray.length; b++){
-			if(basket.rec.intersects(basketArray[b].rec)){
+		for(int b = 0; b< appleArray.length; b++){
+			if(basket.rec.intersects(appleArray[b].rec)){
 				System.out.println("crashing");
 			}
 		}
@@ -179,11 +182,12 @@ public class BasicGameApp implements Runnable, KeyListener {
 		g.clearRect(0, 0, WIDTH, HEIGHT);
 
 		//draw the image of the basketnaut
+		g.drawImage(backgroundPic,0, 0, WIDTH, HEIGHT, null);
 		g.drawImage(basketPic, basket.xpos, basket.ypos, basket.width, basket.height, null);
 		g.drawImage(applePic, apple.xpos, apple.ypos, apple.width, apple.height, null);
-		g.drawImage(appleTreesPic, appleTrees.xpos, appleTrees.ypos, appleTrees.width, appleTrees.height, null);
-		for(int l = 0; l < basketArray.length; l++){
-			g.drawImage(basketPic, basketArray[l].xpos, basketArray[l].ypos, basketArray[l].width, basketArray[l].height, null);
+
+		for(int l = 0; l < appleArray.length; l++){
+			g.drawImage(applePic, appleArray[l].xpos, appleArray[l].ypos, appleArray[l].width, appleArray[l].height, null);
 		}
 		g.dispose();
 
