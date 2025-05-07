@@ -49,8 +49,12 @@ public class BasicGameApp implements Runnable, KeyListener {
 	private Basket apple;
 
 	Basket[]  appleArray = new Basket[10];
+
+	Basket[]  wrapArray = new Basket[2];
 	private Image backgroundPic;
 	private Image applePic;
+	appleArray[0].isAlive = true;
+	private Image greenApplePic;
 	//private Image basketPic;
 
 
@@ -75,15 +79,23 @@ public class BasicGameApp implements Runnable, KeyListener {
 		basketPic = Toolkit.getDefaultToolkit().getImage("basket.jpg");
 		applePic = Toolkit.getDefaultToolkit().getImage("apple.jpg");
 		backgroundPic = Toolkit.getDefaultToolkit().getImage("trees.jpg");//load the picture
+		greenApplePic =  Toolkit.getDefaultToolkit().getImage("greenApple.jpg");
 		basket = new Basket(10,100);
 		apple = new Basket(600,600);
 
+
 //apple.height = 100;
 		for(int x = 0; x<appleArray.length;x++){
-			appleArray[x] = new Basket((int)Math.random()*900,(int)(Math.random()*600));
-			apple.dx = (int)(Math.random()*500);
-			apple.dy = (int)(Math.random()*400);
+			appleArray[x] = new Basket((int)(Math.random()*900),(int)(Math.random()*600));
+			appleArray[x].dx = (int)(Math.random()*9);
+			appleArray[x].dy = (int)(Math.random()*8);
 		}
+		for(int x=0; x< wrapArray.length; x++){
+			wrapArray[x] = new Basket((int)(Math.random()*700),(int)(Math.random()*500));
+			wrapArray[x].dx = (int)(Math.random()*8);
+			wrapArray[x].dy = (int)(Math.random()*9);
+		}
+		//for loop for wrapArray
 
 
 	}// BasicGameApp()
@@ -117,6 +129,9 @@ public class BasicGameApp implements Runnable, KeyListener {
 		for(int y=0; y< appleArray.length; y++){
 			appleArray[y].bounce();
 		}
+		for(int y=0; y<wrapArray.length; y++){
+			wrapArray[y].wrap();
+		}
 
 
 	}
@@ -124,8 +139,17 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 
 
+
 		for(int b = 0; b< appleArray.length; b++){
 			if(basket.rec.intersects(appleArray[b].rec)){
+				System.out.println("crashing");
+				appleArray[0].isAlive = false;
+			}
+		}
+
+
+		for(int b = 0; b< wrapArray.length; b++){
+			if(basket.rec.intersects(wrapArray[b].rec)){
 				System.out.println("crashing");
 			}
 		}
@@ -184,10 +208,19 @@ public class BasicGameApp implements Runnable, KeyListener {
 		//draw the image of the basketnaut
 		g.drawImage(backgroundPic,0, 0, WIDTH, HEIGHT, null);
 		g.drawImage(basketPic, basket.xpos, basket.ypos, basket.width, basket.height, null);
-		g.drawImage(applePic, apple.xpos, apple.ypos, apple.width, apple.height, null);
+		if (appleArray[0].isAlive == true) {
+			g.drawImage(applePic, apple.xpos, apple.ypos, apple.width, apple.height, null);
+		}
+		g.drawImage(greenApplePic,apple.xpos, apple.ypos, apple.width, apple.height, null);
 
 		for(int l = 0; l < appleArray.length; l++){
+			System.out.println("xpos " +appleArray[l].xpos);
+		//	System.out.println("ypos " +appleArray[l].ypos);
+
 			g.drawImage(applePic, appleArray[l].xpos, appleArray[l].ypos, appleArray[l].width, appleArray[l].height, null);
+		}
+		for(int e = 0; e< wrapArray.length; e++){
+			g.drawImage(greenApplePic, wrapArray[e].xpos, wrapArray[e].ypos, wrapArray[e].width, wrapArray[e].height, null);
 		}
 		g.dispose();
 
