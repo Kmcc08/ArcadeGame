@@ -22,6 +22,8 @@ public class Basket {
     public boolean right;
 
 
+
+
     //a boolean to denote if the hero is alive or dead.
 
 

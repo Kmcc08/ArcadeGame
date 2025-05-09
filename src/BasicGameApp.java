@@ -47,14 +47,17 @@ public class BasicGameApp implements Runnable, KeyListener {
 	//These are things that are made up of more than one variable type
 	private Basket basket;
 	private Basket apple;
+	private Basket greenApple;
 
 	Basket[]  appleArray = new Basket[10];
 
-	Basket[]  wrapArray = new Basket[2];
+	Basket[]  wrapArray = new Basket[4];
 	private Image backgroundPic;
 	private Image applePic;
-	appleArray[0].isAlive = true;
 	private Image greenApplePic;
+	private Image endScreenPic;
+	public  int hitCounter = 0;
+	public boolean gameOver = false;
 	//private Image basketPic;
 
 
@@ -64,6 +67,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 		BasicGameApp ex = new BasicGameApp();   //creates a new instance of the game
 		new Thread(ex).start();                 //creates a threads & starts up the code in the run( ) method
 	}
+
+
 
 
 	// Constructor Method
@@ -80,11 +85,18 @@ public class BasicGameApp implements Runnable, KeyListener {
 		applePic = Toolkit.getDefaultToolkit().getImage("apple.jpg");
 		backgroundPic = Toolkit.getDefaultToolkit().getImage("trees.jpg");//load the picture
 		greenApplePic =  Toolkit.getDefaultToolkit().getImage("greenApple.jpg");
+		endScreenPic = Toolkit.getDefaultToolkit().getImage("youWin.jpg");
 		basket = new Basket(10,100);
 		apple = new Basket(600,600);
+		greenApple = new Basket(600,600);
+
 
 
 //apple.height = 100;
+
+
+
+
 		for(int x = 0; x<appleArray.length;x++){
 			appleArray[x] = new Basket((int)(Math.random()*900),(int)(Math.random()*600));
 			appleArray[x].dx = (int)(Math.random()*9);
@@ -134,6 +146,17 @@ public class BasicGameApp implements Runnable, KeyListener {
 		}
 
 
+		if(this.hitCounter >= 14) {
+
+			gameOver = true;
+			System.out.println("you win");
+
+		}
+
+
+
+
+
 	}
 	public void collisions(){
 
@@ -141,15 +164,24 @@ public class BasicGameApp implements Runnable, KeyListener {
 
 
 		for(int b = 0; b< appleArray.length; b++){
-			if(basket.rec.intersects(appleArray[b].rec)){
+			if(basket.rec.intersects(appleArray[b].rec) && appleArray[b].isAlive){
+
+				appleArray[b].isAlive = false;
+				hitCounter++;
+			}
+		}
+
+		for(int x = 0; x< wrapArray.length; x++){
+			if(basket.rec.intersects(wrapArray[x].rec) && wrapArray[x].isAlive){
+				wrapArray[x].isAlive = false;
 				System.out.println("crashing");
-				appleArray[0].isAlive = false;
+				hitCounter++;
 			}
 		}
 
 
-		for(int b = 0; b< wrapArray.length; b++){
-			if(basket.rec.intersects(wrapArray[b].rec)){
+		for(int l = 0; l< wrapArray.length; l++){
+			if(basket.rec.intersects(wrapArray[l].rec)){
 				System.out.println("crashing");
 			}
 		}
@@ -204,24 +236,30 @@ public class BasicGameApp implements Runnable, KeyListener {
 	private void render() {
 		Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g.clearRect(0, 0, WIDTH, HEIGHT);
+		if(gameOver==false) {
 
-		//draw the image of the basketnaut
-		g.drawImage(backgroundPic,0, 0, WIDTH, HEIGHT, null);
-		g.drawImage(basketPic, basket.xpos, basket.ypos, basket.width, basket.height, null);
-		if (appleArray[0].isAlive == true) {
-			g.drawImage(applePic, apple.xpos, apple.ypos, apple.width, apple.height, null);
-		}
-		g.drawImage(greenApplePic,apple.xpos, apple.ypos, apple.width, apple.height, null);
+			//draw the image of the basketnaut
 
-		for(int l = 0; l < appleArray.length; l++){
-			System.out.println("xpos " +appleArray[l].xpos);
-		//	System.out.println("ypos " +appleArray[l].ypos);
+			g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
+			g.drawImage(basketPic, basket.xpos, basket.ypos, basket.width, basket.height, null);
 
-			g.drawImage(applePic, appleArray[l].xpos, appleArray[l].ypos, appleArray[l].width, appleArray[l].height, null);
+			for (int x = 0; x < wrapArray.length; x++) {
+				if (wrapArray[x].isAlive == true) {
+					g.drawImage(greenApplePic, wrapArray[x].xpos, wrapArray[x].ypos, wrapArray[x].width, wrapArray[x].height, null);
+				}
+			}
+
+
+			for (int l = 0; l < appleArray.length; l++) {
+				if (appleArray[l].isAlive == true)
+
+					g.drawImage(applePic, appleArray[l].xpos, appleArray[l].ypos, appleArray[l].width, appleArray[l].height, null);
+			}
 		}
-		for(int e = 0; e< wrapArray.length; e++){
-			g.drawImage(greenApplePic, wrapArray[e].xpos, wrapArray[e].ypos, wrapArray[e].width, wrapArray[e].height, null);
+		else{
+			g.drawImage(endScreenPic,0,0,WIDTH,HEIGHT, null);
 		}
+
 		g.dispose();
 
 		bufferStrategy.show();
